@@ -25,55 +25,40 @@ const routes = {
 };
 
 const server = http.createServer((req, res) => {
+    console.log("HTTP Request:");
+    console.log("Method:", req.method);
+    console.log("URL:", req.url);
 
-    console.log(req.method, req.url);
-
-    // POST separat behandeln (wegen stream)
-
+    // POST seperate due to stream
     if (req.method === "POST" && req.url === "/api/data") {
-
         let body = "";
 
         req.on("data", chunk => {
-
             body += chunk;
-
         });
 
         req.on("end", () => {
-
             const parsed = JSON.parse(body);
 
             res.setHeader("Content-Type", "application/json");
-
             res.end(JSON.stringify({
-
                 status: "received",
-
                 yourData: parsed
-
             }));
 
         });
-
         return;
-
     }
 
-    // GET Routing über map
-
+    // GET Routing via map
     const routeKey = getRouteKey(req);
-
     const handler = routes[routeKey];
 
     if (handler) {
-
         handler(req, res);
 
     } else {
-
         res.statusCode = 404;
-
         res.end("<h1>Not Found</h1>");
 
     }
