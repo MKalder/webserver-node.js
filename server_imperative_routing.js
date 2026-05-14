@@ -41,9 +41,17 @@ const server = http.createServer((req, res) => {
         });
 
         req.on("end", () => {
+            console.log("Raw body:", body);
+            console.log("Body length:", body.length);
+
+            if (!body) {
+                res.statusCode = 400;
+                res.end(JSON.stringify({ error: "Body ist leer" }));
+                return;
+            }
             const parsed = JSON.parse(body);
 
-            console.log("Parsed: " + parsed);
+            console.log("Parsed: ", parsed);
 
             res.setHeader("Content-Type", "application/json");
             res.end(JSON.stringify({
